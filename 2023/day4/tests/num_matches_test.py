@@ -35,3 +35,4 @@ def test() -> None:
         for v in m.values()
     ]
     assert num_matches_list == [4, 2, 2, 1, 0, 0]
+
