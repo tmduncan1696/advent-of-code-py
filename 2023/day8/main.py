@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import numpy as np
 import re
 
 def create_map(input_str: str) -> dict[str, dict[str, str]]:
@@ -26,8 +27,22 @@ def get_steps(instructions: str, map_dict: dict[str, dict[str, str]], current_lo
         for i in instructions:
             current_loc = map_dict.get(current_loc).get(i)
             steps += 1
-            if current_loc == ending_loc:
+            if re.match(ending_loc, current_loc):
                 return steps
+
+def get_ghost_steps(instructions: str, map_dict: dict[str, dict[str, str]]) -> int:
+    current_locs = [
+        x
+        for x in map_dict.keys()
+        if x[2] == 'A'
+    ]
+
+    steps = [
+        get_steps(instructions, map_dict, loc, r'\w\wZ')
+        for loc in current_locs
+    ]
+
+    return np.lcm.reduce(steps)
 
 
 def part1(input) -> None:
@@ -40,6 +55,18 @@ def part1(input) -> None:
     steps = get_steps(instructions, map_dict)
 
     print(f'Part 1: {steps}')
+
+
+def part2(input) -> None:
+    instructions = input[0]
+
+    map_input = input[1:]
+
+    map_dict = create_map(map_input)
+
+    steps = get_ghost_steps(instructions, map_dict)
+
+    print(f'Part 2: {steps}')
 
 
 def main() -> None:
@@ -57,6 +84,7 @@ def main() -> None:
         input = [line.strip() for line in f.readlines() if line.strip() != '']
 
     part1(input)
+    part2(input)
 
 if __name__ == '__main__':
     main()
