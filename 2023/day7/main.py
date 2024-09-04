@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from collections import Counter
+from copy import copy
 from dataclasses import dataclass
 from typing import Any, Self
 
@@ -53,6 +54,13 @@ class Card:
 
     def __hash__(self) -> int:
         return hash(self.rank)
+
+class CardJoker(Card):
+    RANKS = ['J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 
 class Hand:
     RANKS = ['High Card', 'One Pair', 'Two Pair', 'Three of a Kind', 'Full House', 'Four of a Kind', 'Five of a Kind']
@@ -118,12 +126,75 @@ class Hand:
 
         return self.rank_value > other.rank_value
 
-
-
     @classmethod
     def from_string(cls, s: str) -> Self:
         cards = (
             Card(card)
+            for card in list(s)
+        )
+        return cls(tuple(cards))
+
+    def is_five_of_a_kind(self) -> bool:
+        return self.count_of_counts[5] == 1
+
+    def is_four_of_a_kind(self) -> bool:
+        return self.count_of_counts[4] == 1
+
+    def is_full_house(self) -> bool:
+        return self.count_of_counts[3] == 1 and self.count_of_counts[2] == 1
+
+    def is_three_of_a_kind(self) -> bool:
+        return self.count_of_counts[3] == 1 and self.count_of_counts[2] == 0
+
+    def is_two_pair(self) -> bool:
+        return self.count_of_counts[2] == 2
+
+    def is_one_pair(self) -> bool:
+        return self.count_of_counts[2] == 1 and self.count_of_counts[1] == 3
+
+    def is_high_card(self) -> bool:
+        return self.count_of_counts[1] == 5
+
+class HandJoker(Hand):
+    RANKS = ['High Card', 'One Pair', 'Two Pair', 'Three of a Kind', 'Full House', 'Four of a Kind', 'Five of a Kind']
+    cards: tuple[CardJoker]
+
+    def __init__(self, cards: tuple[CardJoker]):
+        self.cards = cards
+        self.count = Counter(self.cards)
+
+        if self.count[Card('J')] != 5:
+            tmp_count = copy(self.count)
+            del tmp_count[Card('J')]
+            most_common_card, _ = tmp_count.most_common(1)[0]
+            self.count[most_common_card] += self.count[Card('J')]
+            self.count[Card('J')] = 0
+
+        self.count_of_counts = Counter(self.count.values())
+
+        if self.is_five_of_a_kind():
+            self.rank = 'Five of a Kind'
+        elif self.is_four_of_a_kind():
+            self.rank = 'Four of a Kind'
+        elif self.is_full_house():
+            self.rank = 'Full House'
+        elif self.is_three_of_a_kind():
+            self.rank = 'Three of a Kind'
+        elif self.is_two_pair():
+            self.rank = 'Two Pair'
+        elif self.is_one_pair():
+            self.rank = 'One Pair'
+        elif self.is_high_card():
+            self.rank = 'High Card'
+        else:
+            raise ValueError('Cannot determine hand rank')
+
+        self.rank_value = self.RANKS.index(self.rank)
+
+    @classmethod
+    def from_string(cls, s: str) -> Self:
+        cards = (
+            CardJoker(card)
             for card in list(s)
         )
         return cls(tuple(cards))
@@ -165,12 +236,27 @@ def part1(input: list[str]) -> None:
 
     print(f'Part 1: {total_winnings}')
 
+def part2(input: list[str]) -> None:
+    hand_input = [x.split() for x in input]
+    hand_bets = [
+        (HandJoker.from_string(hand), int(bet))
+        for hand, bet in hand_input
+    ]
+
+    sorted_hand_bets = sorted(hand_bets)
+
+    sorted_bets = [bet for _, bet in sorted_hand_bets]
+
+    total_winnings = sum([(i + 1) * bet for i, bet in enumerate(sorted_bets)])
+
+    print(f'Part 2: {total_winnings}')
+
 def main() -> None:
     with open('data/input.txt') as f:
         input = [line.strip() for line in f.readlines()]
 
     part1(input)
-
+    part2(input)
 
 
 if __name__ == '__main__':
