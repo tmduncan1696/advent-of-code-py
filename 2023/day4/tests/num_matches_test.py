@@ -1,8 +1,9 @@
 import re
 from typing import Dict
 
-with open('data/example_input.txt', 'r') as f:
+with open('2023/day4/data/example_input.txt', 'r') as f:
     input = [x.strip() for x in f.readlines()]
+
 
 def get_num_matches(x: str) -> Dict[int, int]:
     CARD_REGEX = re.compile(r'Card\s+(\d+):(.*)\|(.*)')
@@ -27,6 +28,7 @@ def get_num_matches(x: str) -> Dict[int, int]:
 
     return {card_number: matching_numbers}
 
+
 def test() -> None:
     num_matches = [get_num_matches(x) for x in input]
     num_matches_list = [
@@ -35,4 +37,3 @@ def test() -> None:
         for v in m.values()
     ]
     assert num_matches_list == [4, 2, 2, 1, 0, 0]
-

@@ -3,6 +3,7 @@ def exponential(n: int, a: int) -> int:
         return 0
     return a ** (n - 1)
 
+
 def test() -> None:
     assert exponential(1, 2) == 1
     assert exponential(2, 2) == 2
