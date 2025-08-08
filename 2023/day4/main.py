@@ -2,6 +2,7 @@ import itertools
 import re
 from typing import Dict, List
 
+
 def get_num_matches(x: str) -> Dict[int, int]:
     CARD_REGEX = re.compile(r'Card\s+(\d+):(.*)\|(.*)')
 
@@ -76,6 +77,6 @@ def main() -> None:
 
     print(f'Part 2: {num_cards}')
 
+
 if __name__ == '__main__':
     main()
-
