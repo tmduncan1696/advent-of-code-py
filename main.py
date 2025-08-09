@@ -20,8 +20,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('year', type=int)
-    parser.add_argument('day', type=int)
+    parser.add_argument('year', type=str)
+    parser.add_argument('day', type=str)
     parser.add_argument('-e', '--example', action='store_true')
 
     args = parser.parse_args()
