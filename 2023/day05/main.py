@@ -5,7 +5,6 @@ Advent of Code 2023 Day 5
 """
 
 import functools
-import itertools
 import re
 
 from utils import read_input_file
