@@ -13,40 +13,23 @@ def power_set(x: List[int]) -> int:
 
 def main() -> None:
 
-    BAG_DICT = {
-        'red': 12,
-        'green': 13,
-        'blue': 14
-    }
+    BAG_DICT = {"red": 12, "green": 13, "blue": 14}
 
-    with open('data/input.txt', 'r') as f:
+    with open("data/input.txt", "r") as f:
         game_strings = [x.strip() for x in f.readlines()]
 
-    games = [
-        Game.from_string(game_string)
-        for game_string in game_strings
-    ]
+    games = [Game.from_string(game_string) for game_string in game_strings]
 
-    possible_game_ids = [
-        game.id
-        for game in games
-        if game.is_possible(BAG_DICT)
-    ]
+    possible_game_ids = [game.id for game in games if game.is_possible(BAG_DICT)]
 
-    print(f'Part 1: {sum(possible_game_ids)}')
+    print(f"Part 1: {sum(possible_game_ids)}")
 
-    min_games = [
-        game.min_possible_game()
-        for game in games
-    ]
+    min_games = [game.min_possible_game() for game in games]
 
-    power_sets = [
-        power_set(min_game.values())
-        for min_game in min_games
-    ]
+    power_sets = [power_set(min_game.values()) for min_game in min_games]
 
-    print(f'Part 2: {sum(power_sets)}')
+    print(f"Part 2: {sum(power_sets)}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

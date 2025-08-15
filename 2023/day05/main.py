@@ -38,29 +38,17 @@ def split_range(range1, range2):
     if min(range2) <= min(range1) < max(range1) <= max(range2):
         return [range1]
     if min(range1) < min(range2) < max(range2) < max(range1):
-        return [
-            [min(range1), min(range2) - 1],
-            range2,
-            [max(range2) + 1, max(range1)]
-        ]
+        return [[min(range1), min(range2) - 1], range2, [max(range2) + 1, max(range1)]]
     if min(range1) < min(range2):
-        return [
-            [min(range1), min(range2) - 1],
-            [min(range2), max(range1)]
-        ]
-    return [
-        [min(range1), max(range2)],
-        [max(range2) + 1, max(range1)]
-    ]
+        return [[min(range1), min(range2) - 1], [min(range2), max(range1)]]
+    return [[min(range1), max(range2)], [max(range2) + 1, max(range1)]]
 
 
 def get_new_ranges(start_ranges, mappings):
     split_ranges = start_ranges
     for mapping in mappings:
         range2 = [mapping[1], mapping[1] + mapping[2] - 1]
-        split_ranges = flatten_list(
-            [split_range(r, range2) for r in split_ranges]
-        )
+        split_ranges = flatten_list([split_range(r, range2) for r in split_ranges])
 
     new_ranges = []
     for mapping in mappings:
@@ -96,43 +84,32 @@ def main(input_file: str) -> None:
     """
     input_data = read_input_file(input_file)
 
-    input_lines = input_data.split('\n\n')
+    input_lines = input_data.split("\n\n")
 
     # Part 1
     seed_string = input_lines[0]
-    seeds = [
-        int(x)
-        for x in re.findall(r'\d+', seed_string)
-    ]
+    seeds = [int(x) for x in re.findall(r"\d+", seed_string)]
 
-    map_names = [
-        re.search(r'(.*) map:(.*)', x)
-        for x in input_lines
-    ]
+    map_names = [re.search(r"(.*) map:(.*)", x) for x in input_lines]
 
-    map_names = [
-        x.group(1)
-        for x in map_names
-        if x is not None
-    ]
+    map_names = [x.group(1) for x in map_names if x is not None]
 
     maps = dict(zip(map_names, input_lines[1:]))
 
     maps = {
         k: [
-            [int(d) for d in re.search(r'\d+ \d+ \d+', x).group(0).split(' ')]
-            for x in v.split('\n')
-            if re.search(r'\d+ \d+ \d+', x) is not None
+            [int(d) for d in re.search(r"\d+ \d+ \d+", x).group(0).split(" ")]
+            for x in v.split("\n")
+            if re.search(r"\d+ \d+ \d+", x) is not None
         ]
         for k, v in maps.items()
     }
 
-    print(f'Part 1: {get_min_location(seeds, maps)}')
+    print(f"Part 1: {get_min_location(seeds, maps)}")
 
     # Part 2
     seed_ranges = [
-        [seeds[i], seeds[i] + seeds[i + 1] - 1]
-        for i in range(0, len(seeds), 2)
+        [seeds[i], seeds[i] + seeds[i + 1] - 1] for i in range(0, len(seeds), 2)
     ]
 
-    print(f'Part 2: {get_min_location_from_ranges(seed_ranges, maps)}')
+    print(f"Part 2: {get_min_location_from_ranges(seed_ranges, maps)}")

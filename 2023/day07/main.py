@@ -5,6 +5,7 @@ from copy import copy
 from dataclasses import dataclass
 from typing import Any, Self
 
+
 def element_exists(lst: list, element: Any) -> bool:
     try:
         lst.index(element)
@@ -12,8 +13,9 @@ def element_exists(lst: list, element: Any) -> bool:
     except ValueError:
         return False
 
+
 class Card:
-    RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
+    RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 
     def __init__(self, rank: str):
         self.rank = rank
@@ -27,43 +29,60 @@ class Card:
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, Card):
-            raise TypeError(f"'< is not supported between instances of 'Card' and '{type(other)}'")
+            raise TypeError(
+                f"'< is not supported between instances of 'Card' and '{type(other)}'"
+            )
 
         return self.value < other.value
 
     def __gt__(self, other) -> bool:
         if not isinstance(other, Card):
-            raise TypeError(f"'> is not supported between instances of 'Card' and '{type(other)}'")
+            raise TypeError(
+                f"'> is not supported between instances of 'Card' and '{type(other)}'"
+            )
 
         return self.value < other.value
 
     def __le__(self, other) -> bool:
         if not isinstance(other, Card):
-            raise TypeError(f"'<= is not supported between instances of 'Card' and '{type(other)}'")
+            raise TypeError(
+                f"'<= is not supported between instances of 'Card' and '{type(other)}'"
+            )
 
         return self.value < other.value
 
     def __ge__(self, other) -> bool:
         if not isinstance(other, Card):
-            raise TypeError(f"'>= is not supported between instances of 'Card' and '{type(other)}'")
+            raise TypeError(
+                f"'>= is not supported between instances of 'Card' and '{type(other)}'"
+            )
 
         return self.value < other.value
 
     def __repr__(self) -> None:
-        return f'Card(rank=\'{self.rank}\')'
+        return f"Card(rank='{self.rank}')"
 
     def __hash__(self) -> int:
         return hash(self.rank)
 
+
 class CardJoker(Card):
-    RANKS = ['J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A']
+    RANKS = ["J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
 class Hand:
-    RANKS = ['High Card', 'One Pair', 'Two Pair', 'Three of a Kind', 'Full House', 'Four of a Kind', 'Five of a Kind']
+    RANKS = [
+        "High Card",
+        "One Pair",
+        "Two Pair",
+        "Three of a Kind",
+        "Full House",
+        "Four of a Kind",
+        "Five of a Kind",
+    ]
     cards: tuple[Card]
 
     def __init__(self, cards: tuple[Card]):
@@ -71,26 +90,26 @@ class Hand:
         self.count = Counter(self.cards)
         self.count_of_counts = Counter(self.count.values())
         if self.is_five_of_a_kind():
-            self.rank = 'Five of a Kind'
+            self.rank = "Five of a Kind"
         elif self.is_four_of_a_kind():
-            self.rank = 'Four of a Kind'
+            self.rank = "Four of a Kind"
         elif self.is_full_house():
-            self.rank = 'Full House'
+            self.rank = "Full House"
         elif self.is_three_of_a_kind():
-            self.rank = 'Three of a Kind'
+            self.rank = "Three of a Kind"
         elif self.is_two_pair():
-            self.rank = 'Two Pair'
+            self.rank = "Two Pair"
         elif self.is_one_pair():
-            self.rank = 'One Pair'
+            self.rank = "One Pair"
         elif self.is_high_card():
-            self.rank = 'High Card'
+            self.rank = "High Card"
         else:
-            raise ValueError('Cannot determine hand rank')
+            raise ValueError("Cannot determine hand rank")
 
         self.rank_value = self.RANKS.index(self.rank)
 
     def __repr__(self) -> str:
-        return f'Hand({self.cards})'
+        return f"Hand({self.cards})"
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Hand):
@@ -100,7 +119,9 @@ class Hand:
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, Hand):
-            raise TypeError(f"'< is not supported between instances of 'Hand' and '{type(other)}'")
+            raise TypeError(
+                f"'< is not supported between instances of 'Hand' and '{type(other)}'"
+            )
 
         if self == other:
             return False
@@ -114,7 +135,9 @@ class Hand:
 
     def __gt__(self, other) -> bool:
         if not isinstance(other, Hand):
-            raise TypeError(f"'> is not supported between instances of 'Hand' and '{type(other)}'")
+            raise TypeError(
+                f"'> is not supported between instances of 'Hand' and '{type(other)}'"
+            )
 
         if self == other:
             return False
@@ -128,10 +151,7 @@ class Hand:
 
     @classmethod
     def from_string(cls, s: str) -> Self:
-        cards = (
-            Card(card)
-            for card in list(s)
-        )
+        cards = (Card(card) for card in list(s))
         return cls(tuple(cards))
 
     def is_five_of_a_kind(self) -> bool:
@@ -155,48 +175,54 @@ class Hand:
     def is_high_card(self) -> bool:
         return self.count_of_counts[1] == 5
 
+
 class HandJoker(Hand):
-    RANKS = ['High Card', 'One Pair', 'Two Pair', 'Three of a Kind', 'Full House', 'Four of a Kind', 'Five of a Kind']
+    RANKS = [
+        "High Card",
+        "One Pair",
+        "Two Pair",
+        "Three of a Kind",
+        "Full House",
+        "Four of a Kind",
+        "Five of a Kind",
+    ]
     cards: tuple[CardJoker]
 
     def __init__(self, cards: tuple[CardJoker]):
         self.cards = cards
         self.count = Counter(self.cards)
 
-        if self.count[Card('J')] != 5:
+        if self.count[Card("J")] != 5:
             tmp_count = copy(self.count)
-            del tmp_count[Card('J')]
+            del tmp_count[Card("J")]
             most_common_card, _ = tmp_count.most_common(1)[0]
-            self.count[most_common_card] += self.count[Card('J')]
-            self.count[Card('J')] = 0
+            self.count[most_common_card] += self.count[Card("J")]
+            self.count[Card("J")] = 0
 
         self.count_of_counts = Counter(self.count.values())
 
         if self.is_five_of_a_kind():
-            self.rank = 'Five of a Kind'
+            self.rank = "Five of a Kind"
         elif self.is_four_of_a_kind():
-            self.rank = 'Four of a Kind'
+            self.rank = "Four of a Kind"
         elif self.is_full_house():
-            self.rank = 'Full House'
+            self.rank = "Full House"
         elif self.is_three_of_a_kind():
-            self.rank = 'Three of a Kind'
+            self.rank = "Three of a Kind"
         elif self.is_two_pair():
-            self.rank = 'Two Pair'
+            self.rank = "Two Pair"
         elif self.is_one_pair():
-            self.rank = 'One Pair'
+            self.rank = "One Pair"
         elif self.is_high_card():
-            self.rank = 'High Card'
+            self.rank = "High Card"
         else:
-            raise ValueError('Cannot determine hand rank')
+            raise ValueError("Cannot determine hand rank")
 
         self.rank_value = self.RANKS.index(self.rank)
 
     @classmethod
     def from_string(cls, s: str) -> Self:
-        cards = (
-            CardJoker(card)
-            for card in list(s)
-        )
+        cards = (CardJoker(card) for card in list(s))
         return cls(tuple(cards))
 
     def is_five_of_a_kind(self) -> bool:
@@ -223,10 +249,7 @@ class HandJoker(Hand):
 
 def part1(input: list[str]) -> None:
     hand_input = [x.split() for x in input]
-    hand_bets = [
-        (Hand.from_string(hand), int(bet))
-        for hand, bet in hand_input
-    ]
+    hand_bets = [(Hand.from_string(hand), int(bet)) for hand, bet in hand_input]
 
     sorted_hand_bets = sorted(hand_bets)
 
@@ -234,14 +257,12 @@ def part1(input: list[str]) -> None:
 
     total_winnings = sum([(i + 1) * bet for i, bet in enumerate(sorted_bets)])
 
-    print(f'Part 1: {total_winnings}')
+    print(f"Part 1: {total_winnings}")
+
 
 def part2(input: list[str]) -> None:
     hand_input = [x.split() for x in input]
-    hand_bets = [
-        (HandJoker.from_string(hand), int(bet))
-        for hand, bet in hand_input
-    ]
+    hand_bets = [(HandJoker.from_string(hand), int(bet)) for hand, bet in hand_input]
 
     sorted_hand_bets = sorted(hand_bets)
 
@@ -249,15 +270,16 @@ def part2(input: list[str]) -> None:
 
     total_winnings = sum([(i + 1) * bet for i, bet in enumerate(sorted_bets)])
 
-    print(f'Part 2: {total_winnings}')
+    print(f"Part 2: {total_winnings}")
+
 
 def main() -> None:
-    with open('data/input.txt') as f:
+    with open("data/input.txt") as f:
         input = [line.strip() for line in f.readlines()]
 
     part1(input)
     part2(input)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
